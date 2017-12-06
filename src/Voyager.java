@@ -6,9 +6,8 @@
 public class Voyager extends Vehicle {
 
 	// in km/s
-	private static final double SPEED = 17.00;
-	
+	private static final double SPEED = 17.00;	
 	public Voyager() {
-		super(SPEED);
+		super(SPEED, "Voyager I");
 	}
 }

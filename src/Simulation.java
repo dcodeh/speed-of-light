@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -20,10 +21,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class Simulation extends Application {
 
-	private static final String WINDOW_TITLE = "How Fast is Light?";
+	private static final String WINDOW_TITLE = "The Speed of Light";
 	private static final String TITLE_TEXT = "New Simulation";
 	private static final int WINDOW_W = 1000;
 	private static final int WINDOW_H = 400;
@@ -33,7 +35,6 @@ public class Simulation extends Application {
 	private Location simDestination;
 	private Vehicle simVehicle;
 	private Task task;
-	private Thread counter;
 	
 	public static void main(String [] args) {
 		launch(args);
@@ -46,6 +47,16 @@ public class Simulation extends Application {
 		stage.setResizable(false);
 		stage.setHeight(WINDOW_H);
 		stage.setWidth(WINDOW_W);
+		
+		stage.setOnCloseRequest(new EventHandler<WindowEvent> () {
+
+			@Override
+			public void handle(WindowEvent arg0) {
+				Platform.exit();
+				System.exit(0);
+			}
+			
+		});
 		
 		BorderPane bp = new BorderPane();
 		bp.setStyle("-fx-background-color: black");
@@ -129,25 +140,33 @@ public class Simulation extends Application {
 		
 		// set up event handlers 
 		task = new Task<Void>() {
-		    @Override public void run() {
-		    	boolean run = true;
+			boolean running = true;
+			
+		    @Override 
+		    public void run() {
 		    	
-		    	while(run) {
+		    	while(running) {
 		    		if(photon != null && vehicle2 != null) {
 		    			vehicle2Progress.setValue(vehicle2.travel());
 		    			photonProgress.setValue(photon.travel());
 		    			
-		    			if(vehicle2Progress.getValue() >= 100) {
-		    				run = false;
-		    			}
-		    			
-		    			if(photonProgress.getValue() >= 100) {
-		    				run = false;
+		    			if((vehicle2Progress.getValue() >= 100) &&
+		    					(photonProgress.getValue() >= 100)) {
+		    				System.out.println("Stopped simulation");
+		    				running = false;
 		    			}
 		    			
 		    		} else {
-		    			run = false;
+		    			System.out.println("Stopped because something was null");
+		    			running = false;
 		    		}
+		    		
+		    		try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+		    		
 		    	}
 		    	
 		    	return;
@@ -156,7 +175,11 @@ public class Simulation extends Application {
 
 			@Override
 			protected Void call() throws Exception {
-				// TODO Auto-generated method stub
+				if(task.isCancelled()) {
+					System.out.println("trying to cancel task");
+					running = false;
+				}
+				
 				return null;
 			}
 		};
@@ -165,34 +188,33 @@ public class Simulation extends Application {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-				if(!task.isRunning()) {
-					// get all of the parameters from combo boxes
-					
-					switch((String) dest.getValue()) {
-						case "Sun":
-							simDestination = new Sun();
-							break;
-							
-						case "Jupiter":
-							simDestination = new Jupiter();
-							break;
-					}
-					
-					switch((String) vehicle.getValue()) {
-						case "Voyager I":
-							simVehicle = new Voyager();
-							break;
-							
-					}
-					
-					photon = new Calculation(new Photon(), simDestination);
-					vehicle2 = new Calculation(simVehicle, simDestination);
-					
-					// TODO set title
-					
-					new Thread(task).start();
+				System.out.println("Starting a new simulation");
+				// get all of the parameters from combo boxes
+				
+				switch((String) dest.getValue()) {
+					case "Sun":
+						simDestination = new Sun();
+						break;
+						
+					case "Jupiter":
+						simDestination = new Jupiter();
+						break;
 				}
 				
+				switch((String) vehicle.getValue()) {
+					case "Voyager I":
+						simVehicle = new Voyager();
+						break;
+						
+				}
+				
+				photon = new Calculation(new Photon(), simDestination);
+				vehicle2 = new Calculation(simVehicle, simDestination);
+				
+				titleText.setText("Photon (299,792 km/s) vs " + simVehicle + " (" + simVehicle.getVelocity() + " km/s)");
+				
+				new Thread(task);
+			
 			}
 			
 		});
@@ -201,9 +223,8 @@ public class Simulation extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
-				if(task.isRunning()) {
-					task.cancel();
-				}
+				task.cancel(true);
+				System.out.println("cancelled the task!");
 			}
 			
 		});
@@ -212,11 +233,10 @@ public class Simulation extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
-				if(task.isRunning()) {
-					task.cancel();
-					photonProgress.setValue(photon.skip());
-					vehicle2Progress.setValue(vehicle2.skip());
-				}
+				System.out.println("Skipping to the good stuff");
+				task.cancel(true);
+				photonProgress.setValue(photon.skip());
+				vehicle2Progress.setValue(vehicle2.skip());
 			}
 			
 		});
