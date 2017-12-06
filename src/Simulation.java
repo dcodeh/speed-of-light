@@ -10,6 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -28,7 +30,10 @@ public class Simulation extends Application {
 	private Slider vehicle2Progress, photonProgress;
 	private Calculation photon;
 	private Calculation vehicle2;
+	private Location simDestination;
+	private Vehicle simVehicle;
 	private Task task;
+	private Thread counter;
 	
 	public static void main(String [] args) {
 		launch(args);
@@ -160,10 +165,78 @@ public class Simulation extends Application {
 
 			@Override
 			public void handle(ActionEvent arg0) {
+				if(!task.isRunning()) {
+					// get all of the parameters from combo boxes
+					
+					switch((String) dest.getValue()) {
+						case "Sun":
+							simDestination = new Sun();
+							break;
+							
+						case "Jupiter":
+							simDestination = new Jupiter();
+							break;
+					}
+					
+					switch((String) vehicle.getValue()) {
+						case "Voyager I":
+							simVehicle = new Voyager();
+							break;
+							
+					}
+					
+					photon = new Calculation(new Photon(), simDestination);
+					vehicle2 = new Calculation(simVehicle, simDestination);
+					
+					// TODO set title
+					
+					new Thread(task).start();
+				}
 				
 			}
 			
 		});
+		
+		stop.setOnAction(new EventHandler<ActionEvent> () {
+
+			@Override
+			public void handle(ActionEvent event) {
+				if(task.isRunning()) {
+					task.cancel();
+				}
+			}
+			
+		});
+		
+		skip.setOnAction(new EventHandler<ActionEvent> () {
+
+			@Override
+			public void handle(ActionEvent event) {
+				if(task.isRunning()) {
+					task.cancel();
+					photonProgress.setValue(photon.skip());
+					vehicle2Progress.setValue(vehicle2.skip());
+				}
+			}
+			
+		});
+		
+		info.setOnAction(new EventHandler<ActionEvent> () {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				// launch dialog
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("About");
+				alert.setHeaderText(WINDOW_TITLE);
+				alert.setContentText("Version 1.0 by Cody Burrows (2017) \n"
+						+ "PHYS 106-01 Solar System Astronomy \n"
+						+ "Final Project");
+				alert.showAndWait();
+			}
+			
+		});
+		
 		
 		Group root = (Group) scene.getRoot();
 		root.getChildren().add(bp);

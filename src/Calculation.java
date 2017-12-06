@@ -70,4 +70,9 @@ public class Calculation {
 		return (distTraveled / loc.getDistanceFromEarth()) * 100;
 	}
 	
+	public double skip() {
+		distTraveled = loc.getDistanceFromEarth();
+		return distTraveled;
+	}
+	
 }
