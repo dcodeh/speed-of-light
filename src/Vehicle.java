@@ -12,4 +12,8 @@ public class Vehicle {
 		this.speed = speed;
 	}
 	
+	public double getVelocity() {
+		return speed;
+	}
+	
 }
