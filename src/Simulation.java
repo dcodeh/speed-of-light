@@ -1,4 +1,7 @@
 import javafx.application.Application;
+import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -23,6 +26,9 @@ public class Simulation extends Application {
 	private static final int WINDOW_W = 1000;
 	private static final int WINDOW_H = 400;
 	private Slider vehicle2Progress, photonProgress;
+	private Calculation photon;
+	private Calculation vehicle2;
+	private Task task;
 	
 	public static void main(String [] args) {
 		launch(args);
@@ -117,6 +123,47 @@ public class Simulation extends Application {
 		bp.setCenter(sim);
 		
 		// set up event handlers 
+		task = new Task<Void>() {
+		    @Override public void run() {
+		    	boolean run = true;
+		    	
+		    	while(run) {
+		    		if(photon != null && vehicle2 != null) {
+		    			vehicle2Progress.setValue(vehicle2.travel());
+		    			photonProgress.setValue(photon.travel());
+		    			
+		    			if(vehicle2Progress.getValue() >= 100) {
+		    				run = false;
+		    			}
+		    			
+		    			if(photonProgress.getValue() >= 100) {
+		    				run = false;
+		    			}
+		    			
+		    		} else {
+		    			run = false;
+		    		}
+		    	}
+		    	
+		    	return;
+		    	// show message?
+		    }
+
+			@Override
+			protected Void call() throws Exception {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		};
+		
+		start.setOnAction(new EventHandler<ActionEvent> () {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				
+			}
+			
+		});
 		
 		Group root = (Group) scene.getRoot();
 		root.getChildren().add(bp);
