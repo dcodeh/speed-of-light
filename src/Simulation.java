@@ -213,7 +213,7 @@ public class Simulation extends Application {
 				
 				titleText.setText("Photon (299,792 km/s) vs " + simVehicle + " (" + simVehicle.getVelocity() + " km/s)");
 				
-				new Thread(task);
+				new Thread(task).start();
 			
 			}
 			
