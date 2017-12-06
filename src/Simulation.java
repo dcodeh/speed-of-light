@@ -5,6 +5,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -61,6 +63,11 @@ public class Simulation extends Application {
 		panel.setAlignment(Pos.CENTER);
 		
 		bp.setBottom(panel);
+		
+		Image earthImage = new Image("res/earth.jpg");
+		ImageView earth = new ImageView(earthImage);
+		
+		bp.setLeft(earth);
 		
 		Group root = (Group) scene.getRoot();
 		root.getChildren().add(bp);
