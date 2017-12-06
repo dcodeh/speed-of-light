@@ -22,6 +22,7 @@ public class Simulation extends Application {
 	private static final String TITLE_TEXT = "New Simulation";
 	private static final int WINDOW_W = 1000;
 	private static final int WINDOW_H = 400;
+	private Slider vehicle2Progress, photonProgress;
 	
 	public static void main(String [] args) {
 		launch(args);
@@ -50,7 +51,7 @@ public class Simulation extends Application {
 		bp.setTop(title);
 		
 		HBox panel = new HBox();
-		Button play = new Button("Start");
+		Button start = new Button("Start");
 		Button stop = new Button("Stop");
 		Button skip = new Button("Skip");
 		Button info = new Button("About");
@@ -66,7 +67,7 @@ public class Simulation extends Application {
 		simSpeed.getItems().addAll("100x", "1000x", "10000x");
 		simSpeed.setValue("1000x");
 		
-		panel.getChildren().addAll(play, stop, skip, info, dest, vehicle, simSpeed);
+		panel.getChildren().addAll(start, stop, skip, info, dest, vehicle, simSpeed);
 		panel.setAlignment(Pos.CENTER);
 		
 		bp.setBottom(panel);
@@ -88,8 +89,8 @@ public class Simulation extends Application {
 		distance.setAlignment(Pos.CENTER);
 		
 		Insets barPad = new Insets(10, 0, 10, 0);
-		
-		Slider photonProgress = new Slider();
+
+		photonProgress = new Slider();
 		photonProgress.setMin(0);
 		photonProgress.setMax(100);
 		photonProgress.setShowTickMarks(true);
@@ -100,7 +101,7 @@ public class Simulation extends Application {
 		photonProgress.setPadding(barPad);
 		photonProgress.setDisable(true);
 		
-		Slider vehicle2Progress = new Slider();
+		vehicle2Progress = new Slider();
 		vehicle2Progress.setMin(0);
 		vehicle2Progress.setMax(100);
 		vehicle2Progress.setShowTickMarks(true);
@@ -112,15 +113,14 @@ public class Simulation extends Application {
 		vehicle2Progress.setDisable(true);
 		
 		sim.getChildren().addAll(photonProgress, vehicle2Progress, distance);
-		
 		sim.setAlignment(Pos.CENTER);
-		
 		bp.setCenter(sim);
+		
+		// set up event handlers 
 		
 		Group root = (Group) scene.getRoot();
 		root.getChildren().add(bp);
-		stage.setScene(scene);
-		
+		stage.setScene(scene);		
 		stage.show();
 		
 	}

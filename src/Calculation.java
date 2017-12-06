@@ -10,7 +10,8 @@ public class Calculation {
 	private Vehicle vehicle;
 	private Location loc;
 	private Calendar launchDate;
-	private int scalingFactor;
+	private int scalingFactor = 100000;
+	private double distTraveled = 0.00;
 	
 	public Calculation(Vehicle v, Location l, int sf) {
 		this(v, l);
@@ -52,6 +53,21 @@ public class Calculation {
 		
 		return (double) diff / 1000;
 		
+	}
+	
+	public double getIncrement() {
+		// assumes updates 10 times per second
+		return vehicle.getVelocity() / 10;
+	}
+	
+	public double getScaledIncrement() {
+		return getIncrement() * scalingFactor;
+	}
+	
+	// returns the percentage of the journey you've made
+	public double travel() {
+		distTraveled += getIncrement();
+		return (distTraveled / loc.getDistanceFromEarth()) * 100;
 	}
 	
 }
