@@ -46,7 +46,7 @@ public class Simulation extends Application {
 		bp.setTop(title);
 		
 		HBox panel = new HBox();
-		Button play = new Button("Play");
+		Button play = new Button("Start");
 		Button stop = new Button("Stop");
 		Button skip = new Button("Skip");
 		Button info = new Button("About");
@@ -67,7 +67,12 @@ public class Simulation extends Application {
 		Image earthImage = new Image("res/earth.jpg");
 		ImageView earth = new ImageView(earthImage);
 		
+		Image sunImage = new Image("res/sun.jpg");
+		ImageView sun = new ImageView(sunImage);
+		
 		bp.setLeft(earth);
+		
+		bp.setRight(sun);
 		
 		Group root = (Group) scene.getRoot();
 		root.getChildren().add(bp);
