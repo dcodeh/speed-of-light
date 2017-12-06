@@ -5,8 +5,8 @@
  */
 public class Jupiter extends Location {
 
-	// in AU
-	private static final double DIST_FROM_EARTH = 5.26;
+	// in km
+	private static final double DIST_FROM_EARTH = 787000000;
 	
 	public Jupiter() {
 		super(DIST_FROM_EARTH);
