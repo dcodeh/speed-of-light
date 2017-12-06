@@ -10,6 +10,12 @@ public class Calculation {
 	private Vehicle vehicle;
 	private Location loc;
 	private Calendar launchDate;
+	private int scalingFactor;
+	
+	public Calculation(Vehicle v, Location l, int sf) {
+		this(v, l);
+		this.scalingFactor = sf;
+	}
 	
 	public Calculation(Vehicle v, Location l) {
 		this.vehicle = v;
