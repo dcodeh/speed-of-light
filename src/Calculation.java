@@ -24,14 +24,14 @@ public class Calculation {
 		launchDate = Calendar.getInstance();
 	}
 	
-	public double getTripDuration() {
+	public long getTripDuration() {
 	
 		// distance = rate * time
 		// time = distance / rate
 		
 		// result is in seconds
 		
-		return loc.getDistanceFromEarth() / vehicle.getVelocity();
+		return (long) (loc.getDistanceFromEarth() / vehicle.getVelocity());
 		
 	}
 	
@@ -44,14 +44,14 @@ public class Calculation {
 		
 	}
 	
-	public double getArrivalDifference(Calculation c) {
+	public long getArrivalDifference(Calculation c) {
 		
 		Calendar arrival1 = c.getArrivalDate();
 		
 		long diff = this.getArrivalDate().getTimeInMillis() - arrival1.getTimeInMillis();
 		diff = Math.abs(diff);
 		
-		return (double) diff / 1000;
+		return diff / 1000;
 		
 	}
 	

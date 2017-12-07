@@ -421,15 +421,15 @@ public class Simulation extends Application {
 		
 	}
 	
-	public String formatDuration(int seconds) {
+	public String formatDuration(long seconds) {
 		
 		String f = "";
 		
-		int numberOfDays;
-		int numberOfHours;
-		int numberOfMinutes;
-		int numberOfSeconds;
-		int numberOfYears; 
+		long numberOfDays;
+		long numberOfHours;
+		long numberOfMinutes;
+		long numberOfSeconds;
+		long numberOfYears; 
 
 		numberOfYears = seconds / 31557600;
 		numberOfDays = (seconds % 31557600) / 86400;
@@ -469,10 +469,10 @@ public class Simulation extends Application {
 	        msg.setTitle("Results");
 	        msg.setHeaderText("Simulation Results");
 	        msg.setContentText("Photon Arrival: " + photonDate + "\n"
-					+ "Photon Trip Duration: " + formatDuration((int) photon.getTripDuration()) + "\n"
+					+ "Photon Trip Duration: " + formatDuration(photon.getTripDuration()) + "\n"
 					+ simVehicle + " Arrival: " + vDate + "\n"
-					+ simVehicle + " Trip Duration: " + formatDuration((int) vehicle2.getTripDuration()) + "\n"
-					+ "Difference: " + formatDuration((int) photon.getArrivalDifference(vehicle2)));
+					+ simVehicle + " Trip Duration: " + formatDuration(vehicle2.getTripDuration()) + "\n"
+					+ "Difference: " + formatDuration(photon.getArrivalDifference(vehicle2)));
 	        msg.showAndWait();
 	    });
 	}
