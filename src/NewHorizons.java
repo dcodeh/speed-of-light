@@ -5,8 +5,8 @@
  */
 public class NewHorizons extends Vehicle {
 
-	// in km/s
-	private static final double SPEED = 16.00;	
+	// in millions of km/s
+	private static final double SPEED = 16.00 / 1000000;	
 	public NewHorizons() {
 		super(SPEED, "New Horizons");
 	}
