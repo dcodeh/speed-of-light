@@ -77,7 +77,7 @@ public class Simulation extends Application {
 		titleText.setFont(new Font("Arial", 20));
 		titleText.setTextFill(Color.WHITE);
 		titleText.setPrefWidth(WINDOW_W);
-		titleText.setAlignment(Pos.BOTTOM_LEFT);
+		titleText.setAlignment(Pos.CENTER);
 		title.getChildren().add(titleText);
 		
 		bp.setTop(title);
@@ -92,7 +92,7 @@ public class Simulation extends Application {
 		dest.setValue("Sun");
 		
 		ComboBox vehicle = new ComboBox();
-		vehicle.getItems().addAll("Voyager I", "New Horizons", "Saturn V", "EmDrive", "USS Enterprise D");
+		vehicle.getItems().addAll("Voyager I", "New Horizons", "Saturn V", "EmDrive", "USS Enterprise D", "Death Star");
 		vehicle.setValue("Voyager I");
 		
 		ComboBox simSpeed = new ComboBox();
@@ -320,6 +320,10 @@ public class Simulation extends Application {
 							
 						case "EmDrive":
 							simVehicle = new EMDrive();
+							break;
+							
+						case "Death Star":
+							simVehicle = new DeathStar();
 							break;
 							
 					}
