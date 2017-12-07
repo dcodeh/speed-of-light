@@ -86,8 +86,8 @@ public class Simulation extends Application {
 		vehicle.setValue("Voyager I");
 		
 		ComboBox simSpeed = new ComboBox();
-		simSpeed.getItems().addAll("100x", "1000x", "10000x");
-		simSpeed.setValue("1000x");
+		simSpeed.getItems().addAll("1x", "100x", "1,000x", "10,000x", "100,000x", "1,000,000x", "1,000,000,000x");
+		simSpeed.setValue("10,000x");
 		
 		panel.getChildren().addAll(start, stop, skip, info, dest, vehicle, simSpeed);
 		panel.setAlignment(Pos.CENTER);
@@ -147,7 +147,6 @@ public class Simulation extends Application {
 					@Override 
 					protected Void call() throws Exception {
 						
-						System.out.println("call entered");
 						boolean running = true;
 						
 						while(running) {
@@ -170,7 +169,7 @@ public class Simulation extends Application {
 				    		}
 				    		
 				    		try {
-								Thread.sleep(100);
+								Thread.sleep(50);
 							} catch (InterruptedException e) {
 								if(isCancelled()) {
 									running = false;
@@ -218,11 +217,44 @@ public class Simulation extends Application {
 							
 					}
 					
-					photon = new Calculation(new Photon(), simDestination);
-					vehicle2 = new Calculation(simVehicle, simDestination);
+					int scale = 1;
+					
+					switch((String) simSpeed.getValue()) {
+						case "1x":
+							break;
+							
+						case "100x":
+							scale = 100;
+							break;
+							
+						case "1,000x":
+							scale = 1000;
+							break;
+							
+						case "10,000x":
+							scale = 10000;
+							break;
+							
+						case "100,000x":
+							scale = 100000;
+							break;
+							
+						case "1,000,000x":
+							scale = 1000000;
+							break;
+							
+						case "1,000,000,000x":
+							scale = 1000000000;
+							break;
+					}
+					
+					photon = new Calculation(new Photon(), simDestination, scale);
+					vehicle2 = new Calculation(simVehicle, simDestination, scale);
 					
 					titleText.setText("Photon (299,792 km/s)   vs   " + 
 							simVehicle + " (" + simVehicle.getVelocity() + " km/s)");
+					
+					distance.setText(simDestination.getDistanceFromEarth() + " km");
 					
 					runService.start();
 				}
@@ -238,6 +270,8 @@ public class Simulation extends Application {
 				
 				if(runService.isRunning()) {
 					runService.cancel();
+					vehicle2Progress.setValue(0);
+					photonProgress.setValue(0);
 				}
 								
 			}

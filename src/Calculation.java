@@ -67,7 +67,7 @@ public class Calculation {
 	// returns the percentage of the journey you've made
 	public double travel() {
 		distTraveled += getIncrement();
-		return (distTraveled / loc.getDistanceFromEarth()) * 1000;
+		return (distTraveled / loc.getDistanceFromEarth()) * scalingFactor;
 	}
 	
 	public double skip() {
