@@ -64,10 +64,10 @@ public class Simulation extends Application {
 		
 		HBox title = new HBox();
 		Label titleText = new Label(TITLE_TEXT);
-		titleText.setFont(new Font("Arial", 40));
+		titleText.setFont(new Font("Arial", 20));
 		titleText.setTextFill(Color.WHITE);
 		titleText.setPrefWidth(WINDOW_W);
-		titleText.setAlignment(Pos.CENTER);
+		titleText.setAlignment(Pos.BOTTOM_LEFT);
 		title.getChildren().add(titleText);
 		
 		bp.setTop(title);
@@ -139,13 +139,13 @@ public class Simulation extends Application {
 		bp.setCenter(sim);
 		
 		// set up event handlers
-		
 		final Service runService = new Service<Void>() {
 
 			@Override
 			protected Task<Void> createTask() {
 				return new Task<Void>() {
-					@Override protected Void call() throws Exception {
+					@Override 
+					protected Void call() throws Exception {
 						
 						System.out.println("call entered");
 						boolean running = true;
@@ -178,8 +178,6 @@ public class Simulation extends Application {
 							}
 				    		
 				    	}
-
-						System.out.println("Simulation exited");
 					
 						return null;
 					}
@@ -189,42 +187,45 @@ public class Simulation extends Application {
 		};
 		
 		
-		
 		start.setOnAction(new EventHandler<ActionEvent> () {
 
 			@Override
 			public void handle(ActionEvent arg0) {
 				
 				// just to be safe
-				runService.reset();
-				photonProgress.setValue(0);
-				vehicle2Progress.setValue(0);
 				
-				// get all of the parameters from combo boxes
-				
-				switch((String) dest.getValue()) {
-					case "Sun":
-						simDestination = new Sun();
-						break;
-						
-					case "Jupiter":
-						simDestination = new Jupiter();
-						break;
+				if(!runService.isRunning()) {					
+					runService.reset();
+					photonProgress.setValue(0);
+					vehicle2Progress.setValue(0);
+					
+					// get all of the parameters from combo boxes
+					
+					switch((String) dest.getValue()) {
+						case "Sun":
+							simDestination = new Sun();
+							break;
+							
+						case "Jupiter":
+							simDestination = new Jupiter();
+							break;
+					}
+					
+					switch((String) vehicle.getValue()) {
+						case "Voyager I":
+							simVehicle = new Voyager();
+							break;
+							
+					}
+					
+					photon = new Calculation(new Photon(), simDestination);
+					vehicle2 = new Calculation(simVehicle, simDestination);
+					
+					titleText.setText("Photon (299,792 km/s)   vs   " + 
+							simVehicle + " (" + simVehicle.getVelocity() + " km/s)");
+					
+					runService.start();
 				}
-				
-				switch((String) vehicle.getValue()) {
-					case "Voyager I":
-						simVehicle = new Voyager();
-						break;
-						
-				}
-				
-				photon = new Calculation(new Photon(), simDestination);
-				vehicle2 = new Calculation(simVehicle, simDestination);
-				
-				titleText.setText("Photon (299,792 km/s) vs " + simVehicle + " (" + simVehicle.getVelocity() + " km/s)");
-				
-				runService.start();
 			
 			}
 			
@@ -234,9 +235,11 @@ public class Simulation extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
-				runService.cancel();
-				photonProgress.setValue(0);
-				vehicle2Progress.setValue(0);
+				
+				if(runService.isRunning()) {
+					runService.cancel();
+				}
+								
 			}
 			
 		});
@@ -245,10 +248,13 @@ public class Simulation extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
-				System.out.println("Skipping to the good stuff");
-				runService.cancel();
-				photonProgress.setValue(photon.skip());
-				vehicle2Progress.setValue(vehicle2.skip());
+				
+				if(runService.isRunning()) {
+					runService.cancel();
+					photonProgress.setValue(photon.skip());
+					vehicle2Progress.setValue(vehicle2.skip());
+				}
+				
 			}
 			
 		});
