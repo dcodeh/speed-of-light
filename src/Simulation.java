@@ -326,6 +326,7 @@ public class Simulation extends Application {
 					photonProgress.setValue(photon.skip());
 					vehicle2Progress.setValue(vehicle2.skip());
 					runService.cancel();
+					displayResults();
 				}
 				
 			}
