@@ -107,8 +107,12 @@ public class Simulation extends Application {
 
 		Image earthImage = new Image("res/earth.jpg");
 		ImageView earth = new ImageView(earthImage);
+		
+		Image galaxyImage = new Image("res/galaxy.png");
+		ImageView galaxy = new ImageView(galaxyImage);
 
 		bp.setLeft(earth);
+		bp.setRight(galaxy);
 			
 		VBox sim = new VBox();
 		Label distance = new Label("Distance");
