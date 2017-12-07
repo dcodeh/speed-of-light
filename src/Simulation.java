@@ -104,16 +104,12 @@ public class Simulation extends Application {
 		
 		bp.setBottom(panel);
 		
+
 		Image earthImage = new Image("res/earth.jpg");
 		ImageView earth = new ImageView(earthImage);
-		
-		Image sunImage = new Image("res/sun.jpg");
-		ImageView sun = new ImageView(sunImage);
-		
+
 		bp.setLeft(earth);
-		
-		bp.setRight(sun);
-		
+			
 		VBox sim = new VBox();
 		Label distance = new Label("Distance");
 		distance.setStyle("-fx-background-color: black");
@@ -238,47 +234,67 @@ public class Simulation extends Application {
 					vehicle2Progress.setValue(0);
 					
 					// get all of the parameters from combo boxes
+					Image img;
 					
 					switch((String) dest.getValue()) {
 						case "Sun":
 							simDestination = new Sun();
+							img = new Image("res/sun.jpg");
 							break;
 							
 						case "Mercury":
 							simDestination = new Mercury();
+							img = new Image("res/mercury.jpg");
 							break;
 						
 						case "Venus":
 							simDestination = new Venus();
+							img = new Image("res/venus.jpg");
 							break;
 							
 						case "Moon":
 							simDestination = new Moon();
+							img = new Image("res/moon.png");
 							break;
 							
 						case "Mars":
 							simDestination = new Mars();
+							img = new Image("res/mars.jpg");
 							break;
 							
 						case "Jupiter":
 							simDestination = new Jupiter();
+							img = new Image("res/jupiter.jpg");
+							break;
+							
+						case "Saturn":
+							simDestination = new Saturn();
+							img = new Image("res/saturn.jpg");
 							break;
 							
 						case "Uranus":
 							simDestination = new Uranus();
+							img = new Image("res/uranus.gif");
 							break;
 							
 						case "Neptune":
 							simDestination = new Neptune();
+							img = new Image("res/neptune.gif");
 							break;
 							
 						case "Alpha Centauri":
+							img = new Image("res/sun.jpg");
 							simDestination = new AlphaCentauri();
 							break;
 							
 						case "Polaris":
+							img = new Image("res/sun.jpg");
 							simDestination = new Polaris();
 							break;
+							
+						default:
+							img = new Image("res/sun.jpg");
+								
 					}
 					
 					switch((String) vehicle.getValue()) {
@@ -339,6 +355,10 @@ public class Simulation extends Application {
 					
 					distance.setText(simDestination.getDistanceFromEarth() + " mil. km");
 					
+					ImageView imageView = new ImageView(img);
+					
+					bp.setRight(imageView);
+
 					runService.start();
 				}
 			
