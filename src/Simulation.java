@@ -1,3 +1,8 @@
+import java.text.SimpleDateFormat;
+import java.util.concurrent.TimeUnit;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
@@ -23,19 +28,24 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 public class Simulation extends Application {
+	
+	private enum Winner {
+		PHOTON, VEHICLE, NONE;
+	}
 
 	private static final String WINDOW_TITLE = "The Speed of Light";
 	private static final String TITLE_TEXT = "New Simulation";
 	private static final int WINDOW_W = 1000;
-	private static final int WINDOW_H = 400;
+	private static final int WINDOW_H = 343;
 	private Slider vehicle2Progress, photonProgress;
 	private Calculation photon;
 	private Calculation vehicle2;
 	private Location simDestination;
 	private Vehicle simVehicle;
-	
+		
 	public static void main(String [] args) {
 		launch(args);
 	}
@@ -71,7 +81,7 @@ public class Simulation extends Application {
 		title.getChildren().add(titleText);
 		
 		bp.setTop(title);
-		
+				
 		HBox panel = new HBox();
 		Button start = new Button("Start");
 		Button stop = new Button("Stop");
@@ -148,6 +158,11 @@ public class Simulation extends Application {
 					protected Void call() throws Exception {
 						
 						boolean running = true;
+						boolean photonArrived = false;
+						boolean vehicleArrived = false;
+						
+						Winner w = Winner.NONE;
+						
 						
 						while(running) {
 							
@@ -156,12 +171,35 @@ public class Simulation extends Application {
 							}
 
 				    		if(photon != null && vehicle2 != null) {
-				    			vehicle2Progress.setValue(vehicle2.travel());
-				    			photonProgress.setValue(photon.travel());
 				    			
-				    			if((vehicle2Progress.getValue() >= 100) &&
-				    					(photonProgress.getValue() >= 100)) {
+				    			if(!photonArrived) {
+					    			photonProgress.setValue(photon.travel());
+					    			
+					    			if(photonProgress.getValue() >= 100) {
+					    				photonArrived = true;
+					    				
+					    				if(w == Winner.NONE) {
+					    					w = Winner.PHOTON;
+					    				}
+					    			}
+				    			}
+				    			
+				    			if(!vehicleArrived) {
+				    				vehicle2Progress.setValue(vehicle2.travel());
+				    				
+				    				if(vehicle2Progress.getValue() >= 100) {
+					    				vehicleArrived = true;
+					    				
+					    				if(w == Winner.NONE) {
+					    					w = Winner.VEHICLE;
+					    				}
+					    			}
+				    	
+				    			}
+				    							    			
+				    			if(photonArrived && vehicleArrived) {
 				    				running = false;
+				    				displayResults();
 				    			}
 				    			
 				    		} else {
@@ -177,9 +215,10 @@ public class Simulation extends Application {
 							}
 				    		
 				    	}
-					
+						
 						return null;
 					}
+					
 				};
 			}
 			
@@ -284,9 +323,9 @@ public class Simulation extends Application {
 			public void handle(ActionEvent event) {
 				
 				if(runService.isRunning()) {
-					runService.cancel();
 					photonProgress.setValue(photon.skip());
 					vehicle2Progress.setValue(vehicle2.skip());
+					runService.cancel();
 				}
 				
 			}
@@ -305,16 +344,72 @@ public class Simulation extends Application {
 						+ "PHYS 106-01 Solar System Astronomy \n"
 						+ "Final Project");
 				alert.showAndWait();
+				alert = null;
 			}
 			
 		});
-		
-		
+				
 		Group root = (Group) scene.getRoot();
 		root.getChildren().add(bp);
 		stage.setScene(scene);		
 		stage.show();
 		
+	}
+	
+	public String formatDuration(int seconds) {
+		
+		String f = "";
+		
+		int numberOfDays;
+		int numberOfHours;
+		int numberOfMinutes;
+		int numberOfSeconds;
+		int numberOfYears; 
+
+		numberOfYears = seconds / 31557600;
+		numberOfDays = (seconds % 31557600) / 86400;
+		numberOfHours = ((seconds % 31557600) % 86400) / 3600;
+		numberOfMinutes = (((seconds % 31557600) % 86400) % 3600) / 60;
+		numberOfSeconds = (((seconds % 31557600) % 86400) % 3600) % 60;
+		
+		if(numberOfYears > 0) {
+			f += numberOfYears + "y ";
+		}
+		
+		if(numberOfDays > 0) {
+			f += numberOfDays + "d ";
+		}
+		
+		if(numberOfHours > 0) {
+			f += numberOfHours + "h ";
+		}
+		
+		if(numberOfMinutes > 0) { 
+			f += numberOfMinutes + "m ";
+		}
+		
+		f += numberOfSeconds + "s ";
+		
+		return f;
+	}
+	
+	public void displayResults() {
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss MM/dd/yyyy");
+		
+		String photonDate = sdf.format(photon.getArrivalDate().getTime());
+		String vDate = sdf.format(vehicle2.getArrivalDate().getTime());
+		
+	    Platform.runLater(() -> {
+	        Alert msg = new Alert(AlertType.INFORMATION);
+	        msg.setTitle("Results");
+	        msg.setHeaderText("Simulation Results");
+	        msg.setContentText("Photon Arrival: " + photonDate + "\n"
+					+ "Photon Trip Duration: " + formatDuration((int) photon.getTripDuration()) + "\n"
+					+ simVehicle + " Arrival: " + vDate + "\n"
+					+ simVehicle + " Trip Duration: " + formatDuration((int) vehicle2.getTripDuration()) + "\n"
+					+ "Difference: " + formatDuration((int) photon.getArrivalDifference(vehicle2)));
+	        msg.showAndWait();
+	    });
 	}
 
 }

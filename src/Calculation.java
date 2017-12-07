@@ -44,7 +44,7 @@ public class Calculation {
 		
 	}
 	
-	public double  getArrivalDifference(Calculation c) {
+	public double getArrivalDifference(Calculation c) {
 		
 		Calendar arrival1 = c.getArrivalDate();
 		
