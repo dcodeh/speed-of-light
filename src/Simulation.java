@@ -88,11 +88,11 @@ public class Simulation extends Application {
 		Button skip = new Button("Skip");
 		Button info = new Button("About");
 		ComboBox dest = new ComboBox();
-		dest.getItems().addAll("Sun", "Jupiter");
+		dest.getItems().addAll("Sun", "Mercury", "Venus", "Moon", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Aplha Centauri", "Polaris");
 		dest.setValue("Sun");
 		
 		ComboBox vehicle = new ComboBox();
-		vehicle.getItems().addAll("Voyager I");
+		vehicle.getItems().addAll("Voyager I", "New Horizons", "Saturn V", "USS Enterprise D");
 		vehicle.setValue("Voyager I");
 		
 		ComboBox simSpeed = new ComboBox();
@@ -244,14 +244,44 @@ public class Simulation extends Application {
 							simDestination = new Sun();
 							break;
 							
+						case "Mercury":
+							simDestination = new Mercury();
+							break;
+						
+						case "Venus":
+							simDestination = new Venus();
+							break;
+							
+						case "Moon":
+							simDestination = new Moon();
+							break;
+							
+						case "Mars":
+							simDestination = new Mars();
+							break;
+							
 						case "Jupiter":
 							simDestination = new Jupiter();
 							break;
+							
+						// TODO figure out how to do uranus
 					}
 					
 					switch((String) vehicle.getValue()) {
 						case "Voyager I":
 							simVehicle = new Voyager();
+							break;
+							
+						case "Saturn V":
+							simVehicle = new SaturnV();
+							break;
+							
+						case "New Horizons":
+							simVehicle = new NewHorizons();
+							break;
+							
+						case "USS Enterprise D":
+							simVehicle = new Enterprise();
 							break;
 							
 					}
