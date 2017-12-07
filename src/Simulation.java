@@ -92,7 +92,7 @@ public class Simulation extends Application {
 		dest.setValue("Sun");
 		
 		ComboBox vehicle = new ComboBox();
-		vehicle.getItems().addAll("Voyager I", "New Horizons", "Saturn V", "USS Enterprise D");
+		vehicle.getItems().addAll("Voyager I", "New Horizons", "Saturn V", "EmDrive", "USS Enterprise D");
 		vehicle.setValue("Voyager I");
 		
 		ComboBox simSpeed = new ComboBox();
@@ -318,6 +318,10 @@ public class Simulation extends Application {
 							simVehicle = new Enterprise();
 							break;
 							
+						case "EmDrive":
+							simVehicle = new EMDrive();
+							break;
+							
 					}
 					
 					int scale = 1;
@@ -355,9 +359,9 @@ public class Simulation extends Application {
 					vehicle2 = new Calculation(simVehicle, simDestination, scale);
 					
 					titleText.setText("Photon (299,792 km/s)   vs   " + 
-							simVehicle + " (" + simVehicle.getVelocity() + " mil. km/s)");
+							simVehicle + " (" + simVehicle.getVelocity() * 1000000 + " km/s)");
 					
-					distance.setText(simDestination.getDistanceFromEarth() + " mil. km");
+					distance.setText(simDestination.getDistanceFromEarth() * 1000000 + " km");
 					
 					ImageView imageView = new ImageView(img);
 					
