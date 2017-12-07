@@ -321,9 +321,9 @@ public class Simulation extends Application {
 					vehicle2 = new Calculation(simVehicle, simDestination, scale);
 					
 					titleText.setText("Photon (299,792 km/s)   vs   " + 
-							simVehicle + " (" + simVehicle.getVelocity() + " km/s)");
+							simVehicle + " (" + simVehicle.getVelocity() + " mil. km/s)");
 					
-					distance.setText(simDestination.getDistanceFromEarth() + " km");
+					distance.setText(simDestination.getDistanceFromEarth() + " mil. km");
 					
 					runService.start();
 				}
