@@ -1,5 +1,6 @@
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -34,7 +35,6 @@ public class Simulation extends Application {
 	private Calculation vehicle2;
 	private Location simDestination;
 	private Vehicle simVehicle;
-	private Task task;
 	
 	public static void main(String [] args) {
 		launch(args);
@@ -138,57 +138,68 @@ public class Simulation extends Application {
 		sim.setAlignment(Pos.CENTER);
 		bp.setCenter(sim);
 		
-		// set up event handlers 
-		task = new Task<Void>() {
-			boolean running = true;
-			
-		    @Override 
-		    public void run() {
-		    	
-		    	while(running) {
-		    		if(photon != null && vehicle2 != null) {
-		    			vehicle2Progress.setValue(vehicle2.travel());
-		    			photonProgress.setValue(photon.travel());
-		    			
-		    			if((vehicle2Progress.getValue() >= 100) &&
-		    					(photonProgress.getValue() >= 100)) {
-		    				System.out.println("Stopped simulation");
-		    				running = false;
-		    			}
-		    			
-		    		} else {
-		    			System.out.println("Stopped because something was null");
-		    			running = false;
-		    		}
-		    		
-		    		try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-		    		
-		    	}
-		    	
-		    	return;
-		    	// show message?
-		    }
+		// set up event handlers
+		
+		final Service runService = new Service<Void>() {
 
 			@Override
-			protected Void call() throws Exception {
-				if(task.isCancelled()) {
-					System.out.println("trying to cancel task");
-					running = false;
-				}
-				
-				return null;
+			protected Task<Void> createTask() {
+				return new Task<Void>() {
+					@Override protected Void call() throws Exception {
+						
+						System.out.println("call entered");
+						boolean running = true;
+						
+						while(running) {
+							
+							if(isCancelled()) {
+								running = false;
+							}
+
+				    		if(photon != null && vehicle2 != null) {
+				    			vehicle2Progress.setValue(vehicle2.travel());
+				    			photonProgress.setValue(photon.travel());
+				    			
+				    			if((vehicle2Progress.getValue() >= 100) &&
+				    					(photonProgress.getValue() >= 100)) {
+				    				running = false;
+				    			}
+				    			
+				    		} else {
+				    			running = false;
+				    		}
+				    		
+				    		try {
+								Thread.sleep(100);
+							} catch (InterruptedException e) {
+								if(isCancelled()) {
+									running = false;
+								}
+							}
+				    		
+				    	}
+
+						System.out.println("Simulation exited");
+					
+						return null;
+					}
+				};
 			}
+			
 		};
+		
+		
 		
 		start.setOnAction(new EventHandler<ActionEvent> () {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-				System.out.println("Starting a new simulation");
+				
+				// just to be safe
+				runService.reset();
+				photonProgress.setValue(0);
+				vehicle2Progress.setValue(0);
+				
 				// get all of the parameters from combo boxes
 				
 				switch((String) dest.getValue()) {
@@ -213,7 +224,7 @@ public class Simulation extends Application {
 				
 				titleText.setText("Photon (299,792 km/s) vs " + simVehicle + " (" + simVehicle.getVelocity() + " km/s)");
 				
-				new Thread(task).start();
+				runService.start();
 			
 			}
 			
@@ -223,8 +234,9 @@ public class Simulation extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
-				task.cancel(true);
-				System.out.println("cancelled the task!");
+				runService.cancel();
+				photonProgress.setValue(0);
+				vehicle2Progress.setValue(0);
 			}
 			
 		});
@@ -234,7 +246,7 @@ public class Simulation extends Application {
 			@Override
 			public void handle(ActionEvent event) {
 				System.out.println("Skipping to the good stuff");
-				task.cancel(true);
+				runService.cancel();
 				photonProgress.setValue(photon.skip());
 				vehicle2Progress.setValue(vehicle2.skip());
 			}
